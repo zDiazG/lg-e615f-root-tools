@@ -11,6 +11,7 @@ PATCH_FILE="$REPO_ROOT/patches/android-cve-2013-6282/0001-api15-guarded.patch"
 mode=
 source_dir=
 ndk_dir=
+output_path=
 while (($#)); do
     case "$1" in
         --dry-run|--fetch)
@@ -25,21 +26,31 @@ while (($#)); do
             shift 2
             ;;
         --ndk)
-            [[ -z "$ndk_dir" && $# -ge 2 ]] || { echo "Usage: $0 --dry-run | --fetch | --source-dir PATH [--ndk PATH]" >&2; exit 2; }
+            [[ -z "$ndk_dir" && $# -ge 2 && -n "$2" ]] || { echo "Usage: $0 --dry-run | --fetch | --source-dir PATH [--ndk PATH [--output PATH]]" >&2; exit 2; }
             ndk_dir=$2
+            shift 2
+            ;;
+        --output)
+            [[ -z "$output_path" && $# -ge 2 && -n "$2" ]] || { echo "Usage: $0 --dry-run | --fetch | --source-dir PATH [--ndk PATH [--output PATH]]" >&2; exit 2; }
+            output_path=$2
             shift 2
             ;;
         *) echo "Unknown argument: $1" >&2; exit 2 ;;
     esac
 done
 
-[[ -n "$mode" ]] || { echo "Usage: $0 --dry-run | --fetch | --source-dir PATH [--ndk PATH]" >&2; exit 2; }
+[[ -n "$mode" ]] || { echo "Usage: $0 --dry-run | --fetch | --source-dir PATH [--ndk PATH [--output PATH]]" >&2; exit 2; }
 if [[ $mode == --dry-run ]]; then
-    [[ -z "$ndk_dir" ]] || { echo "--ndk cannot be used with --dry-run" >&2; exit 2; }
+    [[ -z "$ndk_dir" && -z "$output_path" ]] || { echo "--ndk and --output cannot be used with --dry-run" >&2; exit 2; }
     printf 'upstream=%s\ncommit=%s\nexploit_sha256=%s\npatch=%s\n' \
         "$UPSTREAM_URL" "$UPSTREAM_COMMIT" "$UPSTREAM_EXPLOIT_SHA256" "$PATCH_FILE"
     echo "network_or_filesystem_changes=none"
     exit 0
+fi
+[[ -z "$output_path" || -n "$ndk_dir" ]] || { echo "--output requires --ndk" >&2; exit 2; }
+if [[ -n "$output_path" && ( -e "$output_path" || -L "$output_path" ) ]]; then
+    echo "ERROR: refusing to overwrite output: $output_path" >&2
+    exit 1
 fi
 
 command -v git >/dev/null || { echo "ERROR: git is required" >&2; exit 1; }
@@ -104,4 +115,11 @@ if [[ -n "$ndk_dir" ]]; then
     [[ -s "$binary" ]] || { echo "ERROR: expected ARM executable was not built" >&2; exit 1; }
     file "$binary"
     sha256sum "$binary"
+    if [[ -n "$output_path" ]]; then
+        [[ ! -e "$output_path" && ! -L "$output_path" ]] || { echo "ERROR: refusing to overwrite output: $output_path" >&2; exit 1; }
+        output_dir=$(dirname -- "$output_path")
+        mkdir -p -- "$output_dir"
+        install -m 0755 -- "$binary" "$output_path"
+        printf 'binary_output=%s\n' "$output_path"
+    fi
 fi
