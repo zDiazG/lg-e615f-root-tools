@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Run host-side tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Check shell syntax
+        run: |
+          bash -n scripts/install-user-tools.sh scripts/verify-poc-patch.sh
+          sh -n scripts/device/api15-root-preflight.sh scripts/device/install-supersu-api15.sh
+
+      - name: Check source bootstrap plans without downloading artifacts
+        run: |
+          python scripts/bootstrap-sources.py --list
+          python scripts/bootstrap-sources.py --dry-run simplesshd-19 supersu-v2.82
+
+      - name: Apply the patch to its pinned upstream source
+        run: bash scripts/verify-poc-patch.sh --fetch

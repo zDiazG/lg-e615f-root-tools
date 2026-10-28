@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "description": "Pinned external inputs. Downloaded files live under ignored sources/ and are never executed by CI.",
+  "sources": {
+    "simplesshd-19": {
+      "url": "https://www.galexander.org/software/simplesshd/SimpleSSHD-19.apk",
+      "path": "sources/apks/SimpleSSHD-19.apk",
+      "size_bytes": 1310820,
+      "sha256": "149252fe5ca24bc3e585575a560862727061191f87b95eb5c2ff0a0e6c8dce07",
+      "license_note": "Upstream source repository includes COPYING; review the app and bundled-component terms before redistribution."
+    },
+    "supersu-v2.82": {
+      "url": "https://download.chainfire.eu/1113/SuperSU/UPDATE-SuperSU-v2.82-20170528234214.zip",
+      "path": "sources/root/packages/UPDATE-SuperSU-v2.82-20170528234214.zip",
+      "size_bytes": 5917463,
+      "sha256": "f362c7e80fe3151606f3fcc79d9440e051b3deae824a87a8fef60db3d3742cce",
+      "license_note": "Proprietary package. Keep local; redistribution rights have not been established."
+    },
+    "busybox-1.31.0-armv7": {
+      "url": "https://busybox.net/downloads/binaries/1.31.0-defconfig-multiarch-musl/busybox-armv7l",
+      "path": "sources/bin/busybox-1.31.0-armv7l",
+      "size_bytes": 1152216,
+      "sha256": "cd04052b8b6885f75f50b2a280bfcbf849d8710c8e61d369c533acf307eda064",
+      "license_note": "BusyBox is GPL-2.0; source and binary archive terms apply."
+    },
+    "qpython3-1.3.5": {
+      "url": "https://github.com/qpython-android/qpython3/releases/download/v1.3.5/qpython3-app-release.apk",
+      "path": "sources/apks/qpython3-1.3.5.apk",
+      "size_bytes": 12229374,
+      "sha256": "49c1c966f265a1a670fd56309e72ffa278211ca197e67c02ef8503c677a7cfe1",
+      "license_note": "Legacy upstream APK. Review the upstream project and bundled-component licenses before redistribution."
+    },
+    "curl-static-armv7-8.23.0": {
+      "url": "https://github.com/stunnel/static-curl/releases/download/8.23.0-1/curl-linux-armv7-musl-8.23.0-1.tar.xz",
+      "path": "sources/bin/curl-linux-armv7-musl-8.23.0-1.tar.xz",
+      "size_bytes": 3350260,
+      "sha256": "10245cccca6e81b654ec7454c0397ab26e4a31910440548625a3802ce0971b3b",
+      "license_note": "Third-party build; review its release metadata and bundled certificate-bundle terms before redistribution."
+    },
+    "android-ndk-r10e-linux-x86_64": {
+      "url": "https://dl.google.com/android/repository/android-ndk-r10e-linux-x86_64.zip",
+      "path": "sources/root/tools/android-ndk-r10e-linux-x86_64.zip",
+      "size_bytes": 1110915721,
+      "sha256": "ee5f405f3b57c4f5c3b3b8b5d495ae12b660e03d2112e4ed5c728d349f1e520c",
+      "license_note": "Google NDK archive; accept Google's terms and do not redistribute without checking them."
+    }
+  }
+}
