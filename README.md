@@ -1,6 +1,6 @@
 # LG E615f Root Tools
 
-`lg-e615f-root-tools` contains device-specific notes, a guarded patch to a public Android kernel-root proof of concept, and setup helpers for the LG E615f on stock V10p firmware. It is not a general Android rooting toolkit.
+`lg-e615f-root-tools` documents a patched kernel-root proof of concept and host/device setup scripts for one LG E615f on stock V10p firmware. It is not a general Android rooting toolkit.
 
 ## Tested target
 
@@ -12,53 +12,54 @@
 | Kernel | `3.0.8-perf+` |
 | ABI | 32-bit ARMv7 |
 
-The patched proof of concept has obtained temporary UID 0 on this exact handset and firmware. SuperSU v2.82 was installed under `/system`; `su -c id` returned UID 0 over SimpleSSHD before and after reboot, without another permission prompt. SimpleSSHD's boot receiver and SSH listener were observed after two controlled reboots. These results apply to the tested handset. They do not establish support for other devices or builds.
-
-API numbers identify Android framework levels. API 15 is Android 4.0.x. API 16 is Android 4.1.x Jelly Bean. The current phone is API 15. API 16 firmware and other E615 variants have not been tested with this patched build.
+The patched proof of concept obtained temporary UID 0 on this handset. SuperSU v2.82 then provided persistent `su`; `su -c id` over SimpleSSHD returned UID 0 after reboot without another approval prompt. SimpleSSHD also started after two observed reboots. These results apply to this handset and build only. API 16 is Android 4.1.x; it has not been tested here.
 
 ## Before using the device scripts
 
-Read [device support and limits](docs/device-support.md), [root and recovery procedure](docs/root-and-recovery.md), and [external sources](docs/external-sources.md). The kernel write can hang or panic the phone before a temporary root shell appears. The later SuperSU install writes to `/system`. A local raw `/system` image exists for the tested handset, but it is not a full firmware image or a recovery method for a bootloop or hard brick.
+Read [device support](docs/device-support.md), [root and recovery](docs/root-and-recovery.md), and [external sources](docs/external-sources.md). The kernel write can hang or panic the phone, and the persistent install changes `/system`. No tested recovery path exists for a bootloop or hard brick.
 
-The scripts stop on a target mismatch and refuse to overwrite existing root paths. Do not run them against another phone or firmware based only on an Android API number.
+The device installer checks the target identity and refuses existing root paths. The POC itself does not identify the handset, so use its binary only on the recorded E615f/V10p build.
 
-## Prepare and validate on the host
+## Host setup
 
-List dependencies and preview downloads without network or filesystem changes:
+Requirements: Python 3, Bash, Git, and standard archive tools. The NDK is needed only to build the ARM binary.
+
+List pinned inputs or preview a download plan. These commands do not fetch files:
 
 ```sh
 python3 scripts/bootstrap-sources.py --list
 python3 scripts/bootstrap-sources.py --dry-run simplesshd-19 supersu-v2.82
 ```
 
-Download a named dependency only when you intend to use it. Every downloaded file is checked against the byte size and SHA-256 in [`sources.lock.json`](sources.lock.json). Files go under ignored `sources/` and are not run by CI.
+Fetch only the packages you plan to use. The script checks byte size and SHA-256 and saves downloads under ignored `sources/`:
 
 ```sh
 python3 scripts/bootstrap-sources.py --fetch simplesshd-19 supersu-v2.82
 python3 scripts/root-package-plan.py
 python3 -m unittest discover -s tests -v
-bash scripts/verify-poc-patch.sh --fetch
 ```
 
-To also build the patched ARM binary with the local NDK r10e:
+To build the patched ARM executable, fetch and extract the pinned NDK, then save the output under the ignored `artifacts/` directory:
 
 ```sh
-bash scripts/verify-poc-patch.sh --fetch --ndk sources/root/tools/android-ndk-r10e
+python3 scripts/bootstrap-sources.py --fetch android-ndk-r10e-linux-x86_64
+unzip sources/root/tools/android-ndk-r10e-linux-x86_64.zip -d sources/root/tools
+bash scripts/verify-poc-patch.sh --fetch \
+  --ndk sources/root/tools/android-ndk-r10e \
+  --output artifacts/api15-root-poc-armv7
 ```
 
-The NDK archive is about 1.1 GB. CI checks the upstream commit and patch application but does not download the NDK, build a device binary, run the proof of concept, or connect to a phone. `--dry-run` never fetches sources automatically.
+`--output` refuses to overwrite an existing file. Without it, the script removes the temporary build directory when it exits. The NDK archive is about 1.1 GB. CI validates the host tooling and patch application; it does not build or run the POC or connect to a phone.
 
-## Project contents
+## Project files
 
-- `patches/android-cve-2013-6282/` records the upstream revision and guarded API 15 patch.
-- `scripts/device/` contains read-only target inventory and a narrow SuperSU installer for the exact V10p target.
-- `scripts/bootstrap-sources.py` fetches explicitly selected, pinned external files into ignored `sources/`.
-- `scripts/verify-poc-patch.sh` verifies the upstream source, applies the patch in a temporary copy, and can build it with a supplied NDK.
-- `docs/` contains the supported-device record, install/recovery guidance, source credits, firmware notes, and user-tool details.
-- `.github/workflows/ci.yml` runs host tests, shell syntax checks, source-plan checks, and patch-application validation. It does not run device operations.
+- `patches/android-cve-2013-6282/` contains the pinned upstream reference and API 15 patch.
+- `scripts/` contains source bootstrap, host audits, and device installers.
+- `docs/` records device support, recovery limits, firmware candidates, and external sources.
+- `.github/workflows/ci.yml` runs host-side checks only.
 
-## Limits
+## License
 
-This project has no verified no-boot recovery route for the E615f. The available `/system` dump cannot be converted into a KDZ through a verified process. Firmware candidates are unverified and must not be treated as recovery images. The scripts and binaries come with no warranty; using them can leave the phone unable to boot.
+Original project material is licensed under GPL-3.0-or-later; see [LICENSE](LICENSE). The upstream POC and `patches/android-cve-2013-6282/0001-api15-guarded.patch` are excluded. Their pinned source and other external components are listed in [external sources](docs/external-sources.md).
 
-The patch is based on [timwr/CVE-2013-6282](https://github.com/timwr/CVE-2013-6282). Other external components and their terms are listed in [external sources](docs/external-sources.md).
+Firmware candidates are unverified and are not recovery images. The local `/system` image is not a full firmware dump and has no verified restore procedure.

@@ -6,7 +6,7 @@ The Google Drive V10P copy is the first candidate to investigate because its arc
 
 ## Candidate inventory
 
-| Candidate filename | Expected identity from source listing | Local source file | SHA-256 | MD5 | Assessment |
+| Candidate filename | Expected identity from source listing | Local cache path (ignored, not in Git) | SHA-256 | MD5 | Assessment |
 | --- | --- | --- | --- | --- | --- |
 | `LGE615F-BRA-V10P_00-unverified.kdz` | E615F, BRA, V10P_00 | `sources/backups/firmware-e615f-v10p/V10P_00.unverified.kdz` | `e01a1cb877dd6abfc2bbe1cd8387368e457875d3d5499eceef33516c325c099a` | `a5909933f09b85c11b4dd911e002c201` | Primary inspection candidate. RAR integrity passed and size is 301,886,494 bytes. The catalog lists 287.9 MiB and MD5 `a5909933f09b85c11b4dd91102e201c`; the MD5 does not match. |
 | `LGE615F-BRA-V10P_00-lgrom-unverified.kdz` | E615F, BRA, V10P_00 | `sources/V10P_00.kdz` | `0dbc66b9ef85e554d3ea766d010f9080d7e5c9bf00c7bd71ff8d23454e18034d` | `ca31aa00d08b79566dd407d0c2b8959e` | Lower-confidence candidate. 225,022,733 bytes, versus 287.9 MiB in the catalog. The download completed, but size/hash differ from the listing. |
