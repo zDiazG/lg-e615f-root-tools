@@ -16,4 +16,4 @@ Cloning this repository does not download APKs, firmware, root packages, or the 
 
 ## Redistribution
 
-Hash verification identifies downloaded bytes; it does not grant permission to redistribute them. The external APKs, SuperSU ZIP, NDK, and firmware stay out of Git history and GitHub release assets until their licenses and distribution rights are checked. Firmware candidates are documented separately and are not recommended for recovery.
+Hash verification identifies downloaded bytes; it does not grant permission to redistribute them. The APKs, SuperSU ZIP, and NDK stay out of Git history and release assets. The three firmware candidates are published separately in the [Unverified E615F firmware candidates release](https://github.com/zDiazG/lg-e615f-root-tools/releases/tag/firmware-candidates-2026-10-26), with provenance and hashes recorded in [firmware candidates](firmware-candidates.md). Their publication does not establish recovery compatibility or LG endorsement. Do not flash them based on the release.

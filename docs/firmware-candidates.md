@@ -23,8 +23,6 @@ The Google Drive V10P copy is the first candidate to investigate because its arc
 
 ## Hosting and handling
 
-The candidate files and their source archives stay local under ignored `/sources/` paths. They are not committed to Git history. This document does not assert that a release containing these files exists. If an artifact is published later, verify its identity and redistribution rights first, then use a clearly labeled release asset instead of Git history.
+The source archives and working copies remain under ignored `/sources/` paths and are not committed to Git history. The three candidate KDZs are attached to the separate [Unverified E615F firmware candidates release](https://github.com/zDiazG/lg-e615f-root-tools/releases/tag/firmware-candidates-2026-10-26). Its assets and notes preserve the published files, provenance, and checksums.
 
-Do not flash these candidates based on this record. In particular, matching a catalog MD5 establishes byte identity with that catalog entry, not a safe downgrade/recovery path. The two V10P files are not verified against the catalog hash, and the V10A file is a different operator region. No KDZ parser has successfully extracted these files, and none has been tested in Download Mode on this device.
-
-Large firmware files do not belong in ordinary Git history. A release asset may be suitable only after identity, licensing, and recovery compatibility have been established. Project-built binaries should be published only after the build and device behavior have been validated.
+Do not flash these candidates based on this record or the release. Matching a catalog MD5 establishes byte identity with that catalog entry, not a safe downgrade or recovery path. The two V10P files do not match the catalog hash, and the V10A file is a different operator region. No KDZ parser has successfully extracted these files, and none has been tested in Download Mode on this device. The separate release labels them as unverified research copies, not recovery images.
